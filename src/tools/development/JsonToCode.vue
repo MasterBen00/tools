@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useHandoff } from "@/composables/handoff";
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
+import { useStorage } from "@vueuse/core";
 import { FileJson } from "lucide-vue-next";
 import {
     Btn,
@@ -11,13 +13,10 @@ import {
     Tabs,
     ToolPage,
 } from "@/components/ui";
+import { detectFmt, genJava, type JavaOpts, type JT } from "./jsonToJava";
 
 type F = { t: T; opt: boolean };
-type T =
-    | { k: "str" | "int" | "num" | "bool" | "null" | "unk" }
-    | { k: "arr"; e: T }
-    | { k: "obj"; f: Map<string, F> }
-    | { k: "union"; u: T[] };
+type T = JT;
 
 const SAMPLE = `{
   "id": 42,
@@ -33,17 +32,56 @@ const SAMPLE = `{
   ]
 }`;
 
+const JAVA_SAMPLE = `{
+  "order_id": "3f6c2a9e-8b1d-4c5e-9f7a-2d4b6e8a1c3f",
+  "status": "PAID",
+  "customerEmail": "ada@example.com",
+  "created_at": "2026-11-22T09:15:30.123+01:00",
+  "delivery_date": "2026-11-25",
+  "total": 149.9,
+  "itemCount": 2,
+  "gift": false,
+  "note": null,
+  "shipping_address": { "street": "1 Main St", "city": "London", "postal_code": "N1 9GU" },
+  "items": [
+    { "sku": "BK-001", "name": "Notes on the Engine", "quantity": 1, "unit_price": 99.9 },
+    { "sku": "PN-042", "name": "Fountain pen", "quantity": 1, "unit_price": 50, "engraving": "A.L." }
+  ]
+}`;
+
 const input = ref(SAMPLE);
 const rootName = ref("Root");
-const lang = ref<"ts" | "go" | "py" | "schema">("ts");
+const lang = ref<"ts" | "go" | "py" | "schema" | "java">("ts");
+const javaOpts = useStorage<JavaOpts>("devtools:json-to-code:java", {
+    style: "record",
+    jackson: true,
+    ignoreUnknown: true,
+    nonNull: false,
+    validation: false,
+    pkg: "com.example.dto",
+    nested: true,
+    ints: "Long",
+    javaTime: true,
+}, undefined, { mergeDefaults: true });
+
+// The json-to-java route reuses this component and opens on the Java tab.
+const route = useRoute();
+onMounted(() => {
+    if (route.meta.toolId === "json-to-java") {
+        lang.value = "java";
+        if (input.value === SAMPLE) input.value = JAVA_SAMPLE;
+    }
+});
 const pyStyle = ref<"dataclass" | "typeddict">("dataclass");
 
 function infer(v: unknown): T {
     if (v === null) return { k: "null" };
-    if (typeof v === "string") return { k: "str" };
+    if (typeof v === "string") return { k: "str", fmt: detectFmt(v) };
     if (typeof v === "boolean") return { k: "bool" };
     if (typeof v === "number")
-        return { k: Number.isInteger(v) ? "int" : "num" };
+        return Number.isInteger(v)
+            ? { k: "int", big: Math.abs(v) > 2147483647 }
+            : { k: "num" };
     if (Array.isArray(v))
         return {
             k: "arr",
@@ -81,6 +119,10 @@ function merge(a: T, b: T): T {
             if (!a.f.has(k)) f.set(k, { t: v.t, opt: true });
         return { k: "obj", f };
     }
+    if (a.k === "str" && b.k === "str")
+        return { k: "str", fmt: a.fmt === b.fmt ? a.fmt : undefined };
+    if (a.k === "int" && b.k === "int")
+        return { k: "int", big: !!(a.big || b.big) };
     if (a.k === b.k && a.k !== "union") return a;
     const out: T[] = [];
     for (const m of [...members(a), ...members(b)]) {
@@ -454,6 +496,8 @@ const result = computed<{ out: string; error?: string }>(() => {
             return { out: "package main\n\n" + genGo(t, name) };
         case "py":
             return { out: genPy(t, name, pyStyle.value) };
+        case "java":
+            return { out: genJava(t, name, javaOpts.value) };
         default:
             return { out: genSchema(t, name) };
     }
@@ -474,6 +518,7 @@ useHandoff<{ input?: string }>("json-to-code", (p) => {
                     { value: 'ts', label: 'TypeScript' },
                     { value: 'go', label: 'Go' },
                     { value: 'py', label: 'Python' },
+                    { value: 'java', label: 'Java' },
                     { value: 'schema', label: 'JSON Schema' },
                 ]"
             />
@@ -500,12 +545,84 @@ useHandoff<{ input?: string }>("json-to-code", (p) => {
                     ]"
                 />
             </div>
+            <template v-if="lang === 'java'">
+                <div>
+                    <span class="label">Java style</span>
+                    <Tabs
+                        v-model="javaOpts.style"
+                        size="sm"
+                        :options="[
+                            { value: 'record', label: 'record' },
+                            { value: 'lombok', label: 'Lombok' },
+                            { value: 'pojo', label: 'POJO' },
+                        ]"
+                    />
+                </div>
+                <div class="w-56">
+                    <label class="label" for="j2c-pkg">Package</label>
+                    <input
+                        id="j2c-pkg"
+                        v-model="javaOpts.pkg"
+                        class="input font-mono"
+                        placeholder="com.example.dto"
+                        spellcheck="false"
+                    />
+                </div>
+                <div>
+                    <label class="label" for="j2c-ints">Whole numbers</label>
+                    <select id="j2c-ints" v-model="javaOpts.ints" class="select !w-auto">
+                        <option value="Long">Long</option>
+                        <option value="Integer">Integer</option>
+                        <option value="auto">Integer, Long if too big</option>
+                    </select>
+                </div>
+            </template>
+        </div>
+
+        <div
+            v-if="lang === 'java'"
+            class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm"
+        >
+            <label class="flex items-center gap-2"
+                ><input v-model="javaOpts.jackson" type="checkbox" class="checkbox" />
+                Jackson @JsonProperty</label
+            >
+            <label class="flex items-center gap-2" :class="javaOpts.jackson ? '' : 'opacity-50'"
+                ><input
+                    v-model="javaOpts.ignoreUnknown"
+                    type="checkbox"
+                    class="checkbox"
+                    :disabled="!javaOpts.jackson"
+                />
+                Ignore unknown</label
+            >
+            <label class="flex items-center gap-2" :class="javaOpts.jackson ? '' : 'opacity-50'"
+                ><input
+                    v-model="javaOpts.nonNull"
+                    type="checkbox"
+                    class="checkbox"
+                    :disabled="!javaOpts.jackson"
+                />
+                NON_NULL</label
+            >
+            <label class="flex items-center gap-2"
+                ><input v-model="javaOpts.validation" type="checkbox" class="checkbox" />
+                Bean Validation</label
+            >
+            <label class="flex items-center gap-2"
+                ><input v-model="javaOpts.javaTime" type="checkbox" class="checkbox" />
+                Detect UUID and java.time</label
+            >
+            <label class="flex items-center gap-2"
+                ><input v-model="javaOpts.nested" type="checkbox" class="checkbox" />
+                Nested static types</label
+            >
         </div>
 
         <div class="grid gap-4 lg:grid-cols-2">
             <Panel title="JSON" flush>
                 <template #actions>
-                    <Btn size="sm" variant="ghost" @click="input = SAMPLE"
+                    <Btn size="sm" variant="ghost" @click="input = lang === 'java' ? JAVA_SAMPLE : SAMPLE"
                         ><FileJson /> Sample</Btn
                     >
                 </template>
