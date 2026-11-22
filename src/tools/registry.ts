@@ -13,7 +13,7 @@ import {
     SearchCode, BotOff, Earth, Workflow, Presentation, ImagePlay, SearchCheck,
     PenLine, Link2, SmilePlus, FileKey, Ship, PackageCheck, FileCog, GitMerge, Leaf, CalendarClock, Bug, Package, MemoryStick,
     Waypoints, TableProperties, UserRoundPlus, TextSearch, DatabaseZap, Table2,
-    BookOpenText, Shapes, ShieldHalf, Webhook, Cookie, ScanSearch, Split,
+    BookOpenText, Shapes, ShieldHalf, Webhook, Cookie, ScanSearch, Split, RadioTower,
 } from "lucide-vue-next";
 
 export type CategoryId =
@@ -46,6 +46,20 @@ export interface ToolDef {
     isNew?: boolean;
     component: () => Promise<unknown>;
 }
+
+/**
+ * A tool that lives on its own site because it needs a server (DevTools itself stays browser-only).
+ * It shows up in search, the sidebar and the home page and opens its URL in a new tab, but it has no
+ * route, no per-tool SEO page and is not part of the tool count.
+ */
+export interface ExternalToolDef extends Omit<ToolDef, "component"> {
+    href: string;
+}
+
+/** Anything listed in search, the sidebar or the home page. */
+export type ListedTool = ToolDef | ExternalToolDef;
+
+export const isExternal = (t: ListedTool): t is ExternalToolDef => "href" in t;
 
 export const categories: Category[] = [
     { id: "development", name: "Development", icon: Code },
@@ -218,14 +232,24 @@ export const tools: ToolDef[] = [
     { id: "decision-wheel", name: "Decision Wheel & Picker", category: "utilities", icon: FerrisWheel, keywords: ["wheel", "spin", "random picker", "raffle", "coin flip", "dice", "teams", "decide"], isNew: true, description: "Spin a wheel, pick random items, flip coins, roll dice or split a list into teams.", component: () => import("./utilities/DecisionWheel.vue") },
 ];
 
+// External tools (see ExternalToolDef). Each line starts with `{ href:` on purpose: plugins/seo.ts only
+// reads lines starting with `{ id:`, so these get no local page, OG image, sitemap entry or count.
+export const externalTools: ExternalToolDef[] = [
+    { href: "https://mock.baniamin.com", id: "api-mock-server", name: "API Mock Server", category: "development", icon: Server, keywords: ["mock", "mock api", "mock server", "openapi", "swagger", "fake api", "stub", "rest", "cors", "delay", "error injection"], isNew: true, description: "Create a hosted mock API from an OpenAPI or Swagger spec or by hand, with delays, error injection, templating and a request log." },
+    { href: "https://hook.baniamin.com", id: "webhook-inspector", name: "Webhook Inspector", category: "network", icon: RadioTower, keywords: ["webhook", "request bin", "requestbin", "inspect", "capture", "http", "callback", "replay", "debug"], isNew: true, description: "Get a unique URL that captures webhooks and shows each request live, with replay, curl export and custom responses." },
+];
+
+/** Local tools plus external ones, for search, the sidebar and the home page. */
+export const listedTools: ListedTool[] = [...tools, ...externalTools];
+
 export const toolById = new Map(tools.map((t) => [t.id, t]));
 export const categoryById = new Map(categories.map((c) => [c.id, c]));
 
-export function searchTools(query: string): ToolDef[] {
+export function searchTools(query: string): ListedTool[] {
     const q = query.trim().toLowerCase();
-    if (!q) return tools;
+    if (!q) return listedTools;
     const terms = q.split(/\s+/);
-    return tools
+    return listedTools
         .map((t) => {
             const name = t.name.toLowerCase();
             const hay = [name, t.description.toLowerCase(), ...(t.keywords ?? []), t.category].join(" ");
@@ -233,7 +257,7 @@ export function searchTools(query: string): ToolDef[] {
             const score = name.startsWith(q) ? 0 : name.includes(q) ? 1 : (t.keywords ?? []).some((k) => k.startsWith(q)) ? 2 : 3;
             return { t, score };
         })
-        .filter((x): x is { t: ToolDef; score: number } => x !== null)
+        .filter((x): x is { t: ListedTool; score: number } => x !== null)
         .sort((a, b) => a.score - b.score)
         .map((x) => x.t);
 }

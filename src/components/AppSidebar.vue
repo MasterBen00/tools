@@ -2,7 +2,8 @@
 import { computed, nextTick, onMounted, ref, watch } from "vue";
 import { RouterLink, useRoute } from "vue-router";
 import { ChevronRight, ChevronsDownUp, ChevronsUpDown, CodeXml, House, Info, Search, Star } from "lucide-vue-next";
-import { categories, searchTools, tools } from "@/tools/registry";
+import { categories, isExternal, listedTools, searchTools, tools } from "@/tools/registry";
+import ToolLink from "@/components/ToolLink.vue";
 import { favorites } from "@/composables/prefs";
 import { APP_VERSION, BUILD_DATE } from "@/site";
 
@@ -13,7 +14,7 @@ const nav = ref<HTMLElement>();
 const route = useRoute();
 
 const groups = computed(() => {
-    const list = filter.value ? searchTools(filter.value) : tools;
+    const list = filter.value ? searchTools(filter.value) : listedTools;
     return categories
         .map((c) => ({ ...c, items: list.filter((t) => t.category === c.id) }))
         .filter((g) => g.items.length);
@@ -118,10 +119,10 @@ onMounted(() => revealActive(false));
                     <span class="ml-auto font-normal tabular-nums">{{ g.items.length }}</span>
                 </button>
                 <div v-show="!collapsed[g.id] || filter">
-                    <RouterLink
+                    <ToolLink
                         v-for="t in g.items"
                         :key="t.id"
-                        :to="'/' + t.id"
+                        :tool="t"
                         :data-tool="t.id"
                         class="flex items-center gap-2 rounded-md px-2 py-1.5 text-fg-muted transition-colors hover:text-accent"
                         active-class="!text-accent bg-subtle font-medium"
@@ -129,7 +130,8 @@ onMounted(() => revealActive(false));
                     >
                         <component :is="t.icon" class="size-4 shrink-0" stroke-width="1.75" />
                         <span class="truncate">{{ t.name }}</span>
-                    </RouterLink>
+                        <span v-if="isExternal(t)" class="ml-auto shrink-0 text-xs text-fg-subtle" aria-label="opens another site">↗</span>
+                    </ToolLink>
                 </div>
             </div>
 

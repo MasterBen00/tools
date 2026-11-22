@@ -3,7 +3,7 @@ import { computed, nextTick, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { onKeyStroke } from "@vueuse/core";
 import { CornerDownLeft, Search } from "lucide-vue-next";
-import { categoryById, searchTools } from "@/tools/registry";
+import { categoryById, isExternal, searchTools, type ListedTool } from "@/tools/registry";
 import { recents } from "@/composables/prefs";
 
 const open = defineModel<boolean>("open", { default: false });
@@ -15,8 +15,8 @@ const listEl = ref<HTMLElement>();
 
 const results = computed(() => {
     if (!query.value && recents.value.length) {
-        const rest = searchTools("").filter((t) => !recents.value.includes(t));
-        return [...recents.value, ...rest];
+        const rest = searchTools("").filter((t) => !recents.value.some((r) => r.id === t.id));
+        return [...recents.value, ...rest] as ListedTool[];
     }
     return searchTools(query.value);
 });
@@ -44,9 +44,10 @@ onKeyStroke("/", (e) => {
     open.value = true;
 });
 
-function go(id: string) {
+function go(t: ListedTool) {
     open.value = false;
-    router.push("/" + id);
+    if (isExternal(t)) window.open(t.href, "_blank", "noopener");
+    else router.push("/" + t.id);
 }
 
 function onKey(e: KeyboardEvent) {
@@ -58,7 +59,7 @@ function onKey(e: KeyboardEvent) {
         active.value = Math.max(active.value - 1, 0);
     } else if (e.key === "Enter") {
         const t = results.value[active.value];
-        if (t) go(t.id);
+        if (t) go(t);
     } else if (e.key === "Escape") {
         open.value = false;
         return;
@@ -99,7 +100,7 @@ function onKey(e: KeyboardEvent) {
                             class="flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-left"
                             :class="i === active ? 'bg-subtle' : ''"
                             @mousemove="active = i"
-                            @click="go(t.id)"
+                            @click="go(t)"
                         >
                             <span class="grid size-8 shrink-0 place-items-center rounded-full bg-surface ring-1 ring-line" :class="i === active ? 'text-accent' : 'text-fg-subtle'">
                                 <component :is="t.icon" class="size-4" />
@@ -108,7 +109,7 @@ function onKey(e: KeyboardEvent) {
                                 <span class="block truncate text-sm font-medium text-fg">{{ t.name }}</span>
                                 <span class="block truncate text-xs text-fg-subtle">{{ t.description }}</span>
                             </span>
-                            <span class="hidden shrink-0 text-xs text-fg-subtle sm:block">{{ categoryById.get(t.category)?.name }}</span>
+                            <span class="hidden shrink-0 text-xs text-fg-subtle sm:block">{{ isExternal(t) ? `${t.href.replace("https://", "")} ↗` : categoryById.get(t.category)?.name }}</span>
                             <CornerDownLeft v-if="i === active" class="size-3.5 shrink-0 text-accent" />
                         </button>
                         <p v-if="!results.length" class="py-10 text-center text-sm text-fg-subtle">No tools found.</p>

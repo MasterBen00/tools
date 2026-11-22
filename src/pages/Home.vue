@@ -2,7 +2,8 @@
 import { computed, ref, watch } from "vue";
 import { RouterLink, useRoute } from "vue-router";
 import { ArrowRight, Clock, Search, Star } from "lucide-vue-next";
-import { categories, searchTools, tools, type CategoryId, type ToolDef } from "@/tools/registry";
+import { categories, isExternal, searchTools, tools, type CategoryId, type ListedTool } from "@/tools/registry";
+import ToolLink from "@/components/ToolLink.vue";
 import { favorites, isFavorite, recents, toggleFavorite } from "@/composables/prefs";
 
 const route = useRoute();
@@ -22,7 +23,7 @@ const groups = computed(() =>
 );
 const showPersonal = computed(() => !query.value && activeCat.value === "all");
 
-function star(t: ToolDef) {
+function star(t: ListedTool) {
     toggleFavorite(t.id);
 }
 </script>
@@ -102,8 +103,8 @@ function star(t: ToolDef) {
             </h2>
             <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                 <div v-for="t in g.items" :key="t.id" class="group relative">
-                <RouterLink
-                    :to="'/' + t.id"
+                <ToolLink
+                    :tool="t"
                     class="flex h-full flex-col rounded-2xl border border-line bg-surface p-5 shadow-card transition-colors"
                 >
                     <span class="flex items-center gap-3">
@@ -115,10 +116,15 @@ function star(t: ToolDef) {
                     <span class="mt-3 line-clamp-2 text-sm leading-6 text-fg-muted">{{ t.description }}</span>
                     <span class="mt-4 flex items-center gap-2 text-xs text-fg-subtle">
                         <span v-if="t.isNew" class="rounded-sm bg-accent-soft px-1.5 py-px font-medium text-accent-strong dark:text-accent">New</span>
-                        <span class="ml-auto flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">Open <ArrowRight class="size-3" /></span>
+                        <span v-if="isExternal(t)" class="rounded-sm bg-subtle px-1.5 py-px font-mono ring-1 ring-line">{{ t.href.replace("https://", "") }} ↗</span>
+                        <span class="ml-auto flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                            <template v-if="isExternal(t)">Visit ↗</template>
+                            <template v-else>Open <ArrowRight class="size-3" /></template>
+                        </span>
                     </span>
-                </RouterLink>
+                </ToolLink>
                 <button
+                    v-if="!isExternal(t)"
                     type="button"
                     class="absolute top-4 right-4 cursor-pointer rounded-full p-1.5 transition"
                     :class="isFavorite(t.id) ? 'text-accent' : 'text-fg-subtle opacity-0 group-hover:opacity-100 hover:text-accent focus-visible:opacity-100'"
