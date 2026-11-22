@@ -2,7 +2,7 @@
 
 A collection of 85 free developer tools that run entirely in your browser: JSON, hashes, UUIDs, regex, cron, colors, encoders, AI helpers, productivity timers, and more, plus a chat assistant that runs them for you and a private on-device AI chat. No sign-up and no server. Your data never leaves the tab.
 
-**Live:** https://tools.msar.me
+**Live:** https://tools.baniamin.com
 
 ## Features
 
@@ -12,7 +12,7 @@ A collection of 85 free developer tools that run entirely in your browser: JSON,
 - **Command palette**: press `⌘K` / `Ctrl+K` or `/` to search by name or keyword
 - **Tabs**: every tool you open stays in a tab and keeps its input while you switch. Drag to reorder, middle-click or `Alt+W` to close, `Alt+Shift+←/→` to switch.
 - **Favorites and recent tools** are stored locally
-- **Light, dark and system themes** using the [msar.me design system](https://msar.me/ai/design-system.md): teal accent, Fraunces / Sora / JetBrains Mono, dotted page background
+- **Light, dark and system themes** using the "Midnight Signal" design system from [baniamin.com](https://baniamin.com): indigo → cyan signal accent, Bricolage Grotesque / Inter / JetBrains Mono, engineering-grid page background
 - Responsive layout with a collapsible sidebar on mobile
 - **Installable PWA** that works fully offline after the first visit (every tool is precached)
 - **SEO**: a prerendered page and a generated share image for each tool, with its own title, description, canonical URL, Open Graph/Twitter tags and JSON-LD. The build also writes `sitemap.xml` (with image entries), `robots.txt`, `opensearch.xml` (search tools from the browser address bar), `llms.txt` and a `noindex` 404 page
@@ -33,7 +33,7 @@ Text after a colon, on the next line, in quotes or in a ``` code block is treate
 | Numbers & units  | `255 to hex` · `0xff & 0x0f` · `5 km to miles` · `100 f to c` · `16px to rem` · `1920x1080 aspect ratio` · `chmod 755` · `luhn 4111 1111 1111 1111`                                                                                                               |
 | Web & security   | `192.168.1.10/24` · `what is http 418` · `parse user agent Mozilla/5.0 …` · paste a JWT · paste a PEM certificate · `basic auth admin:secret` · `totp JBSWY3DPEHPK3PXP` · `GET https://api.example.com` (opens the request; nothing is sent until you press Send) |
 | Color & CSS      | `#ff0000 to rgb` · `random color` · `palette from #3b82f6` · `tailwind theme from #0ea5e9`                                                                                                                                                                        |
-| Generators       | `lorem ipsum 2 paragraphs` · `gitignore for node python macos` · `qr code for https://msar.me` · paste a `curl …` or `docker run …` command                                                                                                                       |
+| Generators       | `lorem ipsum 2 paragraphs` · `gitignore for node python macos` · `qr code for https://baniamin.com` · paste a `curl …` or `docker run …` command                                                                                                                       |
 | Productivity     | `start a pomodoro` · `pause pomodoro` · `set a timer for 10 minutes` · `remind me at 3pm to call Sam` · `start break reminders` · `add todo review PR tomorrow`                                                                                                   |
 | Anything else    | `open image converter`, `go to box shadow`, … opens any tool by name                                                                                                                                                                                              |
 
@@ -196,7 +196,7 @@ yarn build
 
 1. Create `src/tools/<category>/<Name>.vue` and wrap it in `<ToolPage>` from `@/components/ui`.
 2. Register it in `src/tools/registry.ts`. Routing, the sidebar, search and the home page update automatically.
-3. Use only the design-system tokens (`bg-surface`, `text-fg-muted`, `text-fg-subtle`, `border-line`, `text-accent`, `bg-inverse`, …) so both themes work. Use `accent` sparingly; primary buttons are `inverse`, never teal.
+3. Use only the design-system tokens (`bg-surface`, `text-fg-muted`, `text-fg-subtle`, `border-line`, `text-accent`, `bg-inverse`, …) so both themes work. Use `accent` sparingly; primary buttons use the indigo → cyan signal gradient (`bg-signal`).
 4. If the tool adds a global listener (paste, keydown), use `useActiveEventListener` so it pauses while the tool sits in a background tab.
 5. To let the chat fill in the tool, call `useHandoff("<tool-id>", (p) => { … })` from `@/composables/handoff` and apply `p.input` (and any other fields) to the tool's state.
 6. To run it from the chat, add a rule to `src/chat/actions.ts` (core commands) or `src/chat/actions-more.ts`. A rule gets the message and returns `{ toolId, summary, output?, handoff? }`, or `null` to let the next rule try. Rules run in order and the first match wins; helpers for pulling the input out of a message live in `src/chat/parse.ts`.
@@ -214,4 +214,8 @@ Vue 3 · TypeScript · Vite 8 · Vue Router 5 · Tailwind CSS 4 · VueUse · Luc
 
 ## Deployment
 
-Pushes to `main` build and deploy to GitHub Pages through GitHub Actions (`.github/workflows/deploy.yml`). Every tool has its own HTML file, so deep links return 200. Unknown paths get the `noindex` 404 page, which boots the app and redirects home.
+Deployed on Cloudflare Pages at https://tools.baniamin.com (build command `yarn build`, output directory `dist`). A GitHub Pages workflow is also kept in `.github/workflows/deploy.yml`. Every tool has its own HTML file, so deep links return 200. Unknown paths get the `noindex` 404 page, which boots the app and redirects home.
+
+## Author
+
+Built and maintained by **Baniamin Shams** · [baniamin.com](https://baniamin.com) · [GitHub](https://github.com/MasterBen00) · [LinkedIn](https://www.linkedin.com/in/baniamin-shams-53a243183)

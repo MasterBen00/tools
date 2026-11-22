@@ -937,7 +937,7 @@ function render() {
         drawElement(ctx, rc!, el, env);
     }
     // overlays
-    const accent = dark ? "#34d4bf" : "#00776e";
+    const accent = dark ? "#9d91ff" : "#5040e8";
     const lw = 1 / z;
     const hs = 8 / z;
     const chosen = sel.value;

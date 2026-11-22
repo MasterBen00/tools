@@ -34,7 +34,7 @@ const form = useStorage<Form>(
             "A short, compelling summary of what this page offers, written for people and search engines.",
         keywords: "",
         author: "",
-        canonical: "https://msar.me/",
+        canonical: "https://baniamin.com/",
         index: true,
         follow: true,
         themeColor: "#10b981",
@@ -201,7 +201,7 @@ const viewports = [
                                 ><input
                                     v-model="form.canonical"
                                     class="input"
-                                    placeholder="https://msar.me/page"
+                                    placeholder="https://baniamin.com/page"
                             /></Field>
                         </div>
                     </div>
@@ -313,7 +313,7 @@ const viewports = [
                             ><input
                                 v-model="form.ogImage"
                                 class="input"
-                                placeholder="https://msar.me/og.png"
+                                placeholder="https://baniamin.com/og.png"
                         /></Field>
                         <Field label="Locale"
                             ><input

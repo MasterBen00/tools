@@ -280,10 +280,10 @@ const PRIORITIES = [
 const MAX_URLS = 50000;
 const today = new Date().toISOString().slice(0, 10);
 
-const baseUrl = useStorage("tools:sitemap:base", "https://msar.me");
+const baseUrl = useStorage("tools:sitemap:base", "https://baniamin.com");
 const urlsText = useStorage(
     "tools:sitemap:urls",
-    "/\n/about\n/blog\nhttps://msar.me/contact",
+    "/\n/about\n/blog\nhttps://baniamin.com/contact",
 );
 const lastmodMode = useStorage<"today" | "none" | "custom">(
     "tools:sitemap:lastmod",
@@ -394,9 +394,9 @@ const origin = computed(() => {
     try {
         return parsed.value.urls[0]
             ? new URL(parsed.value.urls[0]).origin
-            : "https://msar.me";
+            : "https://baniamin.com";
     } catch {
-        return "https://msar.me";
+        return "https://baniamin.com";
     }
 });
 const files = computed<{ name: string; content: string }[]>(() => {
@@ -575,7 +575,7 @@ function downloadAll() {
                                         v-model="sitemaps[si]"
                                         class="input min-w-0 font-mono"
                                         spellcheck="false"
-                                        placeholder="https://msar.me/sitemap.xml"
+                                        placeholder="https://baniamin.com/sitemap.xml"
                                     />
                                     <Btn
                                         variant="ghost"
@@ -731,7 +731,7 @@ function downloadAll() {
                                 v-model="baseUrl"
                                 class="input font-mono"
                                 spellcheck="false"
-                                placeholder="https://msar.me"
+                                placeholder="https://baniamin.com"
                             />
                         </Field>
                         <Field label="URLs or paths (one per line)">
@@ -739,7 +739,7 @@ function downloadAll() {
                                 v-model="urlsText"
                                 class="input min-h-40 font-mono text-[13px]"
                                 spellcheck="false"
-                                placeholder="/about&#10;/blog/post-1&#10;https://msar.me/contact"
+                                placeholder="/about&#10;/blog/post-1&#10;https://baniamin.com/contact"
                             />
                         </Field>
                         <div class="grid gap-3 sm:grid-cols-2">

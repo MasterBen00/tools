@@ -43,7 +43,7 @@ function greet(name: string) {
 
 > Blockquotes work too. See [the spec](https://github.github.com/gfm/).
 
-![Remote image](https://msar.me/picture.png)
+![Remote image](https://baniamin.com/picture.png)
 `;
 
 const src = ref(SAMPLE);
@@ -51,7 +51,7 @@ const view = ref<"preview" | "html" | "text">("preview");
 const dir = ref<"md" | "html">("md");
 
 const SAMPLE_HTML = `<h1>HTML to Markdown</h1>
-<p>Paste <strong>HTML</strong> and get <em>clean</em> Markdown with <a href="https://msar.me">links</a> and <code>code</code>.</p>
+<p>Paste <strong>HTML</strong> and get <em>clean</em> Markdown with <a href="https://baniamin.com">links</a> and <code>code</code>.</p>
 <ul><li>Lists</li><li>Tables</li></ul>
 <table><thead><tr><th>Tool</th><th>Type</th></tr></thead><tbody><tr><td>Turndown</td><td>Converter</td></tr></tbody></table>
 <pre><code class="language-js">console.log("hi");</code></pre>`;

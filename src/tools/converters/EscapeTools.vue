@@ -57,7 +57,7 @@ const samples: Record<Kind, [string, string]> = {
     ],
     hex: [`café ✓`, `caf\\xC3\\xA9 \\xE2\\x9C\\x93`],
     url: [
-        `https://msar.me/search?q=héllo wörld&tag=a/b`,
+        `https://baniamin.com/search?q=héllo wörld&tag=a/b`,
         `https%3A%2F%2Fexample.com%2Fsearch%3Fq%3Dh%C3%A9llo%20w%C3%B6rld%26tag%3Da%2Fb`,
     ],
     punycode: [

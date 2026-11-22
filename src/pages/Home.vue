@@ -30,11 +30,12 @@ function star(t: ToolDef) {
 <template>
     <div class="space-y-14">
         <!-- Hero -->
-        <section class="rounded-2xl border border-line bg-surface px-6 py-10 shadow-card sm:px-10 sm:py-14">
+        <section class="relative overflow-hidden rounded-3xl border border-line bg-surface/80 px-6 py-10 shadow-card backdrop-blur sm:px-10 sm:py-14">
+            <div aria-hidden="true" class="pointer-events-none absolute -top-24 -right-24 size-72 rounded-full bg-signal opacity-20 blur-3xl"></div>
             <div class="max-w-2xl">
-                <p class="mb-5 text-sm text-fg-subtle">{{ tools.length }} tools · runs entirely in your browser</p>
-                <h1 class="font-display text-4xl leading-10 font-semibold text-fg sm:text-5xl sm:leading-14">
-                    <span class="text-accent">Developer tools.</span> Format, convert and inspect without leaving the tab.
+                <p class="mb-5 inline-flex items-center gap-2 rounded-full bg-accent-soft px-3 py-1 font-mono text-xs text-accent"><span class="size-1.5 rounded-full bg-success"></span>{{ tools.length }} tools · runs entirely in your browser</p>
+                <h1 class="font-display text-4xl leading-10 font-bold tracking-tight text-fg sm:text-5xl sm:leading-14">
+                    <span class="text-signal">Developer tools.</span> Format, convert and inspect without leaving the tab.
                 </h1>
                 <p class="mt-5 text-base leading-7 text-fg-muted">
                     No sign-ups, no servers, no tracking. Your data stays on your machine, and every tool keeps working offline once the page has loaded.
@@ -74,7 +75,7 @@ function star(t: ToolDef) {
             <button
                 type="button"
                 class="shrink-0 cursor-pointer rounded-full px-3.5 py-1.5 text-sm font-medium transition-[transform,color,background-color] duration-150 active:scale-[0.97]"
-                :class="activeCat === 'all' ? 'bg-inverse text-inverse-fg' : 'bg-surface text-fg ring-1 ring-line hover:text-accent'"
+                :class="activeCat === 'all' ? 'bg-signal text-white' :'bg-surface text-fg ring-1 ring-line hover:text-accent'"
                 :aria-pressed="activeCat === 'all'"
                 @click="activeCat = 'all'"
             >
@@ -85,7 +86,7 @@ function star(t: ToolDef) {
                 :key="c.id"
                 type="button"
                 class="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium transition-[transform,color,background-color] duration-150 active:scale-[0.97]"
-                :class="activeCat === c.id ? 'bg-inverse text-inverse-fg' : 'bg-surface text-fg ring-1 ring-line hover:text-accent'"
+                :class="activeCat === c.id ? 'bg-signal text-white' :'bg-surface text-fg ring-1 ring-line hover:text-accent'"
                 :aria-pressed="activeCat === c.id"
                 @click="activeCat = c.id"
             >

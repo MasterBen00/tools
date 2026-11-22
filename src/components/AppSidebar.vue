@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref, watch } from "vue";
 import { RouterLink, useRoute } from "vue-router";
-import { ChevronRight, ChevronsDownUp, ChevronsUpDown, House, Info, Search, Star, Wrench } from "lucide-vue-next";
+import { ChevronRight, ChevronsDownUp, ChevronsUpDown, CodeXml, House, Info, Search, Star } from "lucide-vue-next";
 import { categories, searchTools, tools } from "@/tools/registry";
 import { favorites } from "@/composables/prefs";
 import { APP_VERSION, BUILD_DATE } from "@/site";
@@ -52,12 +52,12 @@ onMounted(() => revealActive(false));
 <template>
     <aside class="flex h-full flex-col border-r border-line bg-surface">
         <RouterLink to="/" class="flex h-14 shrink-0 items-center gap-2.5 border-b border-line px-4" @click="emit('navigate')">
-            <span class="grid size-9 place-items-center rounded-full bg-surface text-fg shadow-float ring-1 ring-line">
-                <Wrench class="size-4" stroke-width="1.75" />
+            <span class="grid size-9 place-items-center rounded-xl bg-signal text-white shadow-[0_6px_18px_-8px_rgba(91,70,245,0.8)]">
+                <CodeXml class="size-[18px]" stroke-width="2.25" />
             </span>
             <span class="leading-tight">
-                <span class="block font-display text-lg font-semibold text-fg">DevTools</span>
-                <span class="block text-[11px] text-fg-subtle">{{ tools.length }} tools · msar.me</span>
+                <span class="block font-display text-lg font-bold tracking-tight text-fg">DevTools</span>
+                <span class="block text-[11px] text-fg-subtle">{{ tools.length }} tools · by Baniamin</span>
             </span>
         </RouterLink>
 

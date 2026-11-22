@@ -5,13 +5,12 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 const pub = (f) => fileURLToPath(new URL(`../public/${f}`, import.meta.url));
-// msar.me design system: accent (light) / accent-fg, and dark-theme tokens for the share image.
-const ACCENT = "#00776e";
-const ACCENT_FG = "#f3fcfa";
+// "Midnight Signal" design system (baniamin.com): indigo -> cyan signal gradient on ink surfaces.
+const ACCENT_FG = "#ffffff";
+const GRAD = `<linearGradient id="sig" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c6cff"/><stop offset=".45" stop-color="#5b8cff"/><stop offset="1" stop-color="#22d3ee"/></linearGradient>`;
 
-// Lucide "wrench" (ISC license), a 24×24 stroke icon, the same one the app header uses.
-const GLYPH =
-    "M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z";
+// Lucide "code-xml" (ISC license), a 24×24 stroke icon, the same one the app header uses.
+const GLYPH = "m18 16 4-4-4-4 M6 8l-4 4 4 4 M14.5 4l-5 16";
 
 /** Icon SVG. `pad` shrinks the glyph for maskable/apple icons; `round` keeps rounded corners. */
 export const icon = ({ pad = 0, round = true } = {}) => {
@@ -20,8 +19,9 @@ export const icon = ({ pad = 0, round = true } = {}) => {
     const scale = box / 24;
     const offset = (32 - box) / 2;
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="${round ? 8 : 0}" fill="${ACCENT}"/>
-  <g transform="translate(${offset} ${offset}) scale(${scale})"><path d="${GLYPH}" fill="none" stroke="${ACCENT_FG}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <defs>${GRAD}</defs>
+  <rect width="32" height="32" rx="${round ? 9 : 0}" fill="url(#sig)"/>
+  <g transform="translate(${offset} ${offset}) scale(${scale})"><path d="${GLYPH}" fill="none" stroke="${ACCENT_FG}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g>
 </svg>`;
 };
 
@@ -48,25 +48,27 @@ let x = 80;
 const chipSvg = chips
     .map((c) => {
         const w = c.length * 15 + 36;
-        const s = `<g transform="translate(${x} 478)"><rect width="${w}" height="44" rx="6" fill="#0e1114" stroke="#25292f"/><text x="${w / 2}" y="29" text-anchor="middle" font-family="JetBrains Mono, Menlo, monospace" font-size="19" fill="#b3b8be">${c}</text></g>`;
+        const s = `<g transform="translate(${x} 478)"><rect width="${w}" height="44" rx="22" fill="#161927" stroke="#33374d"/><text x="${w / 2}" y="29" text-anchor="middle" font-family="JetBrains Mono, Consolas, Menlo, monospace" font-size="19" fill="#a4a9c0">${c}</text></g>`;
         x += w + 12;
         return s;
     })
     .join("");
 
-// No gradients (design-system rule): flat bg with the dot grid, a surface column ringed by `line`.
+// Ink background with the engineering grid and an aurora glow, a card ringed by `line`.
 const og = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <defs>
-    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="#ffffff26"/></pattern>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0H0V48" fill="none" stroke="#ffffff0d"/></pattern>
+    <radialGradient id="glow" cx="0.9" cy="0" r="0.7"><stop offset="0" stop-color="#7c6cff" stop-opacity=".35"/><stop offset="1" stop-color="#7c6cff" stop-opacity="0"/></radialGradient>
   </defs>
-  <rect width="1200" height="630" fill="#07080b"/>
-  <rect width="1200" height="630" fill="url(#dots)"/>
-  <rect x="40" y="40" width="1120" height="550" rx="16" fill="#0e1114" stroke="#25292f"/>
-  <g transform="translate(80 80) scale(2)"><circle cx="16" cy="16" r="16" fill="${ACCENT}"/>${icon({ round: false }).replace(/<\/?svg[^>]*>/g, "").replace(/<rect[^>]*\/>/, "")}</g>
-  <text x="160" y="125" font-family="Fraunces, Georgia, serif" font-size="36" font-weight="600" fill="#f1f4f6">DevTools</text>
-  <text x="80" y="275" font-family="Fraunces, Georgia, serif" font-size="66" font-weight="600" fill="#34d4bf">Developer tools.</text>
-  <text x="80" y="355" font-family="Fraunces, Georgia, serif" font-size="66" font-weight="600" fill="#f1f4f6">Right in your browser.</text>
-  <text x="80" y="428" font-family="Sora, Helvetica, Arial, sans-serif" font-size="26" fill="#b3b8be">${count} free tools · private · works offline · tools.msar.me</text>
+  <rect width="1200" height="630" fill="#07080d"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect x="40" y="40" width="1120" height="550" rx="28" fill="#0f111b" fill-opacity=".85" stroke="#232638"/>
+  <g transform="translate(80 80) scale(2)">${icon().replace(/<\/?svg[^>]*>/g, "")}</g>
+  <text x="160" y="125" font-family="Bricolage Grotesque, Inter, Segoe UI, Arial, sans-serif" font-size="36" font-weight="700" fill="#eef0f8">DevTools</text>
+  <text x="80" y="275" font-family="Bricolage Grotesque, Inter, Segoe UI, Arial, sans-serif" font-size="68" font-weight="700" fill="url(#sig)">Developer tools.</text>
+  <text x="80" y="355" font-family="Bricolage Grotesque, Inter, Segoe UI, Arial, sans-serif" font-size="68" font-weight="700" fill="#eef0f8">Right in your browser.</text>
+  <text x="80" y="428" font-family="Inter, Helvetica, Arial, sans-serif" font-size="26" fill="#a4a9c0">${count} free tools · private · works offline · by Baniamin Shams</text>
   ${chipSvg}
 </svg>`;
 writeFileSync(pub("og-image.svg"), og);

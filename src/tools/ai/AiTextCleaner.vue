@@ -217,7 +217,7 @@ const SAMPLE = `# Summary of findings
 The study​ found that **remote work** improves focus [1][2]. Researchers note “results vary” — especially across roles… 【4:0†source】
 
 - Output rose 12–18% (source)
-- See [the report](https://msar.me/report) for more^1
+- See [the report](https://baniamin.com/report) for more^1
 
 \`\`\`js
 console.log("hello");

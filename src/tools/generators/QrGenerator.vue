@@ -17,7 +17,7 @@ import { downloadBlob } from "@/composables/useClipboard";
 type Kind = "text" | "wifi" | "email" | "phone" | "sms" | "vcard";
 const kind = ref<Kind>("text");
 
-const text = ref("https://msar.me");
+const text = ref("https://baniamin.com");
 const wifi = ref({
     ssid: "",
     password: "",
@@ -172,7 +172,7 @@ useHandoff<{ input?: string }>("qr-code-generator", (p) => {
                                 v-model="text"
                                 rows="4"
                                 class="input"
-                                placeholder="https://msar.me"
+                                placeholder="https://baniamin.com"
                                 spellcheck="false"
                             />
                         </Field>

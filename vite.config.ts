@@ -57,8 +57,8 @@ export default defineConfig({
                 display: "standalone",
                 display_override: ["window-controls-overlay", "standalone"],
                 orientation: "any",
-                background_color: "#f8fafc",
-                theme_color: "#00776e",
+                background_color: "#f4f5fa",
+                theme_color: "#5b46f5",
                 categories: ["developer", "productivity", "utilities"],
                 icons: [
                     { src: "pwa-64x64.png", sizes: "64x64", type: "image/png" },
@@ -159,9 +159,6 @@ export default defineConfig({
     define: {
         __APP_VERSION__: JSON.stringify(pkg.version),
         __BUILD_DATE__: JSON.stringify(BUILD_DATE),
-    },
-    server: {
-        allowedHosts: ["app.msar.dev"],
     },
     // Large chunks (tokenizer, prettier parsers) are lazy-loaded per tool.
     build: { chunkSizeWarningLimit: 2500 },

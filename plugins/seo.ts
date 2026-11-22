@@ -114,25 +114,27 @@ function wrap(text: string, maxChars: number, maxLines: number) {
     return lines;
 }
 
-/** 1200×630 share image for one tool, in the msar.me dark palette (flat, no gradients). */
+/** 1200×630 share image for one tool, in the "Midnight Signal" dark palette (baniamin.com). */
 function toolOgSvg(t: ToolMeta, total: number) {
     const titleSize = t.name.length > 20 ? 64 : 76;
     const desc = wrap(t.description, 58, 3)
         .map(
             (l, i) =>
-                `<text x="80" y="${388 + i * 44}" font-family="Sora, Helvetica, Arial, sans-serif" font-size="28" fill="#b3b8be">${esc(l)}</text>`,
+                `<text x="80" y="${388 + i * 44}" font-family="Inter, Helvetica, Arial, sans-serif" font-size="28" fill="#a4a9c0">${esc(l)}</text>`,
         )
         .join("");
     return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <defs><pattern id="d" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="#ffffff26"/></pattern></defs>
-  <rect width="1200" height="630" fill="#07080b"/><rect width="1200" height="630" fill="url(#d)"/>
-  <rect x="40" y="40" width="1120" height="550" rx="16" fill="#0e1114" stroke="#25292f"/>
-  <text x="80" y="128" font-family="Sora, Helvetica, Arial, sans-serif" font-size="24" fill="#8b9097">${esc(t.category)}</text>
-  <text x="80" y="${titleSize > 70 ? 300 : 290}" font-family="Fraunces, Georgia, serif" font-size="${titleSize}" font-weight="600" fill="#34d4bf">${esc(t.name)}</text>
+  <defs><pattern id="d" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0H0V48" fill="none" stroke="#ffffff0d"/></pattern>
+  <radialGradient id="g" cx="0.9" cy="0" r="0.7"><stop offset="0" stop-color="#7c6cff" stop-opacity=".35"/><stop offset="1" stop-color="#7c6cff" stop-opacity="0"/></radialGradient>
+  <linearGradient id="s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7c6cff"/><stop offset=".45" stop-color="#5b8cff"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs>
+  <rect width="1200" height="630" fill="#07080d"/><rect width="1200" height="630" fill="url(#d)"/><rect width="1200" height="630" fill="url(#g)"/>
+  <rect x="40" y="40" width="1120" height="550" rx="28" fill="#0f111b" fill-opacity=".85" stroke="#232638"/>
+  <text x="80" y="128" font-family="JetBrains Mono, Consolas, Menlo, monospace" font-size="22" fill="#9d91ff">${esc(t.category.toUpperCase())}</text>
+  <text x="80" y="${titleSize > 70 ? 300 : 290}" font-family="Bricolage Grotesque, Inter, Segoe UI, Arial, sans-serif" font-size="${titleSize}" font-weight="700" fill="url(#s)">${esc(t.name)}</text>
   ${desc}
-  <line x1="80" y1="512" x2="1120" y2="512" stroke="#25292f"/>
-  <text x="80" y="556" font-family="Fraunces, Georgia, serif" font-size="30" font-weight="600" fill="#f1f4f6">DevTools</text>
-  <text x="1120" y="556" text-anchor="end" font-family="Sora, Helvetica, Arial, sans-serif" font-size="22" fill="#8b9097">${total} free browser tools · tools.msar.me</text>
+  <line x1="80" y1="512" x2="1120" y2="512" stroke="#232638"/>
+  <text x="80" y="556" font-family="Bricolage Grotesque, Inter, Segoe UI, Arial, sans-serif" font-size="30" font-weight="700" fill="#eef0f8">DevTools</text>
+  <text x="1120" y="556" text-anchor="end" font-family="Inter, Helvetica, Arial, sans-serif" font-size="22" fill="#767b96">${total} free browser tools · tools.baniamin.com</text>
 </svg>`;
 }
 

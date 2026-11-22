@@ -29,7 +29,7 @@ const SAMPLE = `{
   "address": { "city": "London", "zip": "N1" },
   "projects": [
     { "title": "Analytical Engine", "year": 1843 },
-    { "title": "Notes", "year": 1843, "url": "https://msar.me" }
+    { "title": "Notes", "year": 1843, "url": "https://baniamin.com" }
   ]
 }`;
 

@@ -80,7 +80,7 @@ export interface Token {
 }
 
 const FONT_STACK = `"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`;
-const TITLE_STACK = `Sora, ui-sans-serif, system-ui, sans-serif`;
+const TITLE_STACK = `Inter, ui-sans-serif, system-ui, sans-serif`;
 
 // Same grouping as the hljs colours in style.css, innermost class first.
 const classKinds: [RegExp, TokenKind][] = [
@@ -295,4 +295,4 @@ export function toSvg(lines: Token[][], o: ImageOptions): string {
     }${parts.join("")}</svg>`;
 }
 
-export const FONT_LOAD = [`400 16px "JetBrains Mono"`, `italic 400 16px "JetBrains Mono"`, `500 13px Sora`];
+export const FONT_LOAD = [`400 16px "JetBrains Mono"`, `italic 400 16px "JetBrains Mono"`, `500 13px Inter`];

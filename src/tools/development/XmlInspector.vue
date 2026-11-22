@@ -14,7 +14,7 @@ import {
 } from "@/components/ui";
 
 const SAMPLE = `<?xml version="1.0" encoding="UTF-8"?>
-<catalog xmlns="http://msar.me/catalog" xmlns:meta="http://msar.me/meta">
+<catalog xmlns="http://baniamin.com/catalog" xmlns:meta="http://baniamin.com/meta">
   <book id="b1" meta:lang="en"><title>XML Basics</title><price>29.99</price></book>
   <book id="b2" meta:lang="fr"><title>Les Bases</title><price>19.50</price></book>
 </catalog>`;

@@ -247,7 +247,7 @@ useHandoff<{ tab?: Tab; input?: string }>("url-encoder", (p) => {
                 <CodeArea
                     :model-value="urlText"
                     height="5rem"
-                    placeholder="https://msar.me/path?x=1#top"
+                    placeholder="https://baniamin.com/path?x=1#top"
                     @update:model-value="loadUrl"
                 />
             </Panel>

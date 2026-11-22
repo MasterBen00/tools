@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterLink } from "vue-router";
-import { Github, Globe, ShieldCheck, WifiOff, Wrench } from "lucide-vue-next";
+import { Github, Globe, Linkedin, ShieldCheck, WifiOff, Wrench } from "lucide-vue-next";
 import { Panel } from "@/components/ui";
 import { categories, tools } from "@/tools/registry";
 import { AUTHOR, SITE_NAME } from "@/site";
@@ -17,7 +17,7 @@ const points = [
         <section class="space-y-4">
             <p class="text-sm text-fg-subtle">About</p>
             <h1 class="font-display text-4xl leading-tight font-semibold text-fg sm:text-5xl">
-                <span class="text-accent">{{ SITE_NAME }}</span> is a set of free developer tools that stay in your browser.
+                <span class="text-signal">{{ SITE_NAME }}</span> is a set of free developer tools that stay in your browser.
             </h1>
             <p class="text-base leading-7 text-fg-muted">
                 DevTools brings {{ tools.length }} tools across {{ categories.length }} categories into one place: JSON and YAML, regex, hashes and UUIDs, encoders,
@@ -49,24 +49,32 @@ const points = [
             <div class="flex flex-wrap items-start justify-between gap-4">
                 <div class="min-w-0">
                     <p class="text-sm font-medium text-fg">{{ AUTHOR }}</p>
-                    <p class="mt-1 text-sm leading-6 text-fg-muted">Built and maintained as a personal project. The source code is open on GitHub.</p>
+                    <p class="mt-1 text-sm leading-6 text-fg-muted">Software engineer. Built and maintained as a personal project; the source code is open on GitHub.</p>
                 </div>
                 <div class="flex flex-wrap gap-2">
                     <a
-                        href="https://msar.me"
+                        href="https://baniamin.com"
                         target="_blank"
                         rel="noopener"
                         class="inline-flex h-9 items-center gap-2 rounded-full bg-subtle px-3.5 text-sm font-medium text-fg ring-1 ring-line ring-inset transition-colors hover:bg-surface hover:text-accent"
                     >
-                        <Globe class="size-4" stroke-width="1.75" /> msar.me
+                        <Globe class="size-4" stroke-width="1.75" /> baniamin.com
                     </a>
                     <a
-                        href="https://github.com/4msar/tools"
+                        href="https://github.com/MasterBen00/tools"
                         target="_blank"
                         rel="noopener"
                         class="inline-flex h-9 items-center gap-2 rounded-full bg-subtle px-3.5 text-sm font-medium text-fg ring-1 ring-line ring-inset transition-colors hover:bg-surface hover:text-accent"
                     >
                         <Github class="size-4" stroke-width="1.75" /> Source
+                    </a>
+                    <a
+                        href="https://www.linkedin.com/in/baniamin-shams-53a243183"
+                        target="_blank"
+                        rel="noopener"
+                        class="inline-flex h-9 items-center gap-2 rounded-full bg-subtle px-3.5 text-sm font-medium text-fg ring-1 ring-line ring-inset transition-colors hover:bg-surface hover:text-accent"
+                    >
+                        <Linkedin class="size-4" stroke-width="1.75" /> LinkedIn
                     </a>
                 </div>
             </div>

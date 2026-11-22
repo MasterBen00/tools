@@ -24,7 +24,7 @@ version: 1.1.0
 tags: [c, a, d]
 author:
   name: Ada
-  url: https://msar.me
+  url: https://baniamin.com
 `;
 
 const left = ref(A);
