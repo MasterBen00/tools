@@ -1,12 +1,12 @@
 # DevTools
 
-A collection of 85 free developer tools that run entirely in your browser: JSON, hashes, UUIDs, regex, cron, colors, encoders, AI helpers, productivity timers, and more, plus a chat assistant that runs them for you and a private on-device AI chat. No sign-up and no server. Your data never leaves the tab.
+A collection of 130 free developer tools that run entirely in your browser: JSON, hashes, UUIDs, regex, cron, colors, encoders, AI helpers, productivity timers, and more, plus a chat assistant that runs them for you and a private on-device AI chat. No sign-up and no server. Your data never leaves the tab.
 
 **Live:** https://tools.baniamin.com
 
 ## Features
 
-- **101 tools** in 12 categories, each lazy-loaded
+- **130 tools** in 12 categories, each lazy-loaded
 - **Chat assistant** that finds tools and runs them from plain-language commands, then opens the tool with your input filled in (see [Chat assistant](#chat-assistant))
 - **General Chat**: a private AI chat with an open-source model running in the browser (WebLLM + WebGPU). Pick any model from the WebLLM catalog or add a custom MLC model; also available as a tab in the chatbox
 - **Command palette**: press `⌘K` / `Ctrl+K` or `/` to search by name or keyword
@@ -47,17 +47,30 @@ Tools that need a file, a password or a visual editor (image converter, favicon,
 
 - **JSON Formatter**: Format, minify, sort and validate JSON, and convert it to YAML.
 - **Regex Tester**: Test a regular expression live with highlighted matches, capture groups and replace.
-- **JSON to Code**: Generate TypeScript, Go, Python or JSON Schema types from a JSON sample.
+- **JSON to Code**: Generate TypeScript, Go, Python, Java or JSON Schema types from a JSON sample.
+- **JSON to Java**: Generate Java records, Lombok classes or POJOs with Jackson and Bean Validation annotations from a JSON sample.
 - **JSON Schema Validator**: Validate JSON against a JSON Schema as you type, with paths to each error.
 - **JSON Diff**: Compare two JSON documents by value and list every added, removed and changed path.
 - **HTML Preview**: Render HTML in a sandboxed frame that cannot reach the network.
 - **Code Playground**: Experiment with HTML, CSS and JavaScript with a live preview and console.
 - **Code Formatter**: Beautify HTML, CSS, JavaScript, TypeScript, Markdown, YAML and SQL.
+- **Code to Image**: Turn a code snippet into a polished image with themes, backgrounds and window chrome, then export PNG or SVG.
 - **Semver Calculator**: Check versions against npm ranges, compare versions and bump them.
 - **XML Inspector**: Format, minify and validate XML, convert XML to and from JSON, and query with XPath.
 - **JSONPath Evaluator**: Query JSON with JSONPath expressions and see matching values and paths live.
 - **SQL Formatter**: Format or minify SQL for any dialect, and turn INSERT statements into JSON or CSV.
 - **Mermaid Diagram Editor**: Write Mermaid flowcharts, sequence, ER and Gantt diagrams with a live preview, and export SVG or PNG.
+- **Java Stack Trace Beautifier**: Paste a Java stack trace to see the cause chain, the root cause and your own frames, with framework frames collapsed.
+- **JVM Memory Flags Calculator**: Size JVM heap, metaspace, thread stacks and direct memory for a container and get the flags, GC choice and Docker or Kubernetes snippets.
+- **Kubernetes YAML Validator**: Explain and validate multi-document Kubernetes manifests: required fields, removed apiVersions, selectors and security best practices.
+- **Dockerfile Linter**: Lint a Dockerfile for caching, security and size problems with fixes, a score and a suggested .dockerignore.
+- **Nginx & Apache Config Formatter**: Format and check nginx and Apache httpd configs: indentation, comments, alignment, minify and brace or tag errors.
+- **Git Command Builder**: Pick what you want to do in Git and get the exact commands, with danger level, caveats and how to undo.
+- **SQL to ER Diagram**: Turn CREATE TABLE statements into a Mermaid ER diagram with keys and relationships, then export SVG or PNG.
+- **Elasticsearch Query Builder**: Build bool queries and aggregations visually, or format and validate query DSL, with Kibana, curl and Spring Data output.
+- **MongoDB ↔ SQL Translator**: Translate SQL SELECT queries to MongoDB find or aggregate pipelines and back, with a Spring Data Criteria snippet.
+- **OpenAPI Viewer**: Browse OpenAPI 3 and Swagger 2 specs with endpoints, schemas, example JSON and curl commands.
+- **GraphQL Formatter & Query Builder**: Format and minify GraphQL, and build typed operations with variables from an SDL schema.
 
 ### Generators
 
@@ -73,6 +86,7 @@ Tools that need a file, a password or a visual editor (image converter, favicon,
 - **License Generator**: Generate an open-source LICENSE file (MIT, GPL, Apache, BSD and more) with your name and year.
 - **Meta Tag Generator**: Build SEO, Open Graph and Twitter meta tags with live search and social previews.
 - **Robots.txt & Sitemap Generator**: Build robots.txt rules (including AI crawler blocking), test URLs against them, and generate sitemap.xml.
+- **Fake Data Generator**: Generate up to 10,000 rows of realistic mock data with a seed, Bangladeshi locale, and JSON, CSV, SQL or NDJSON export.
 
 ### Security
 
@@ -82,6 +96,8 @@ Tools that need a file, a password or a visual editor (image converter, favicon,
 - **Certificate Decoder**: Decode X.509 certificates and CSRs: subject, validity, SANs, key usage and fingerprints.
 - **Basic Auth Generator**: Build or decode an HTTP Basic Authorization header, with ready-to-use snippets.
 - **JavaScript Obfuscator**: Minify and obfuscate JavaScript by encoding strings and packing the source, then compare output.
+- **CSP Builder**: Build a Content-Security-Policy with presets, warnings and ready-to-paste header, meta, Nginx, Apache, Spring and Express snippets.
+- **Webhook Signature Tool**: Sign and verify webhook payloads with HMAC for Stripe, GitHub, Slack, Shopify, Twilio or custom schemes.
 
 ### Converters
 
@@ -97,6 +113,11 @@ Tools that need a file, a password or a visual editor (image converter, favicon,
 - **Compression**: Compress and decompress GZIP, zlib and raw deflate data as Base64 or hex.
 - **cURL to Code**: Convert a cURL command to fetch, Node, Python, Go or PHP code.
 - **Docker Run to Compose**: Convert docker run commands into a Docker Compose file.
+- **Spring Properties to YAML**: Convert Spring Boot application.properties to application.yml and back, with lists, profiles and exact string values.
+- **Maven Gradle Converter**: Convert dependencies between Maven pom.xml, Gradle Groovy and Gradle Kotlin DSL, with scopes, exclusions and BOMs.
+- **Slug & Filename Sanitizer**: Turn titles into URL slugs, safe filenames or identifiers, with Bangla, Cyrillic and accent transliteration.
+- **Env File Diff**: Compare .env against .env.example to find missing, extra, empty and duplicate keys, with secrets masked.
+- **SQL INSERT Generator**: Generate batched INSERT statements from CSV, TSV or JSON for MySQL, PostgreSQL, SQLite, SQL Server or Oracle.
 
 ### Text
 
@@ -105,12 +126,16 @@ Tools that need a file, a password or a visual editor (image converter, favicon,
 - **String Inspector**: Count characters, words, lines and bytes, and find hidden Unicode characters.
 - **Line Tools**: Sort, dedupe, trim, reverse, shuffle and filter lines.
 - **ASCII Art Generator**: Turn text into ASCII art banners in 29 FIGlet fonts, ready to paste as a code comment.
+- **Prose Diff**: Compare two drafts word by word with tracked changes and side-by-side readability stats.
+- **Emoji & Unicode Picker**: Search emoji and Unicode symbols and copy them as characters, code points, entities or language escapes.
+- **Markdown Table Generator**: Edit a table in a grid and get an aligned Markdown table, with CSV or Markdown import and HTML and CSV export.
 
 ### Time & Date
 
 - **Timestamp Converter**: Convert Unix timestamps and date strings in seconds, milliseconds and more.
 - **Date Difference**: Calculate the time between two dates, or add and subtract durations.
-- **Cron Calculator**: Explain cron expressions in plain English and list the next runs.
+- **Cron Calculator**: Explain Unix and Spring cron expressions in plain English and list the next runs.
+- **Spring Cron Expression**: Explain and test 6-field Spring @Scheduled cron expressions, with macros, L, W and # and the next run times.
 - **Time Zone Converter**: Convert a date and time between time zones, with DST handled.
 - **Stopwatch**: Record laps and split times and export them as CSV.
 - **Countdown Timer**: Count down to events and dates, or run a timer with a progress ring and alert.
@@ -151,7 +176,11 @@ Tools that need a file, a password or a visual editor (image converter, favicon,
 - **Server Block Generator**: Generate Nginx server blocks, Apache virtual hosts and Caddyfiles for static sites, PHP apps and reverse proxies.
 - **WHOIS Lookup**: Look up a domain, IP or ASN via RDAP: registrar, dates, status and nameservers.
 - **Subdomain Explorer**: Find a domain's subdomains from Certificate Transparency logs and check which resolve.
+- **Domain Name Finder**: Find a domain name: check availability across TLDs, get prefix and suffix ideas, and see who holds taken names.
 - **DNS Lookup**: Query A, MX, TXT, NS and other DNS records over HTTPS, with reverse lookup and SPF/DMARC checks.
+- **Cookie Parser**: Parse Cookie and Set-Cookie headers, decode values, flag insecure attributes and build Set-Cookie strings.
+- **HTTP Header Inspector**: Explain raw HTTP headers and grade security headers from A+ to F with fix suggestions.
+- **URL Parser**: Take a URL apart into editable parts, path segments and query parameters, strip tracking params and rebuild it.
 
 ### AI
 
