@@ -12,8 +12,10 @@ function parseBig(raw: string, base: number): bigint | null {
     if (!s) return null;
     let neg = false;
     if (s[0] === "-" || s[0] === "+") { neg = s[0] === "-"; s = s.slice(1); }
+    // A 0x/0b/0o prefix only counts when its letter is not a digit of the field's base,
+    // so "0b1" or "0BAD" typed in the hex field stay hexadecimal.
     const pre = s.match(/^0([xbo])/);
-    if (pre) { base = pre[1] === "x" ? 16 : pre[1] === "b" ? 2 : 8; s = s.slice(2); }
+    if (pre && DIGITS.indexOf(pre[1]) >= base) { base = pre[1] === "x" ? 16 : pre[1] === "b" ? 2 : 8; s = s.slice(2); }
     if (!s) return null;
     let n = 0n;
     const b = BigInt(base);

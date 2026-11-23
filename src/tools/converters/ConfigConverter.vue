@@ -42,12 +42,20 @@ function parseEnv(text: string): Record<string, string> {
         let v = m[2];
         const q = v[0];
         if (q === '"' || q === "'") {
-            let end = v.indexOf(q, 1);
+            // In double quotes a backslash escapes the next character, so \" does not close the value.
+            const close = (s: string) => {
+                for (let j = 1; j < s.length; j++) {
+                    if (q === '"' && s[j] === "\\") j++;
+                    else if (s[j] === q) return j;
+                }
+                return -1;
+            };
+            let end = close(v);
             // multi-line quoted values
-            while (end < 0 && i + 1 < lines.length) { v += "\n" + lines[++i]; end = v.indexOf(q, 1); }
+            while (end < 0 && i + 1 < lines.length) { v += "\n" + lines[++i]; end = close(v); }
             if (end < 0) throw new Error(`Line ${i + 1}: unterminated quote`);
             v = v.slice(1, end);
-            if (q === '"') v = v.replace(/\\n/g, "\n").replace(/\\t/g, "\t").replace(/\\"/g, '"').replace(/\\\\/g, "\\");
+            if (q === '"') v = v.replace(/\\([\s\S])/g, (m: string, c: string) => (c === "n" ? "\n" : c === "t" ? "\t" : c === "r" ? "\r" : c === '"' || c === "\\" ? c : m));
         } else {
             v = v.replace(/\s+#.*$/, "").trim();
         }

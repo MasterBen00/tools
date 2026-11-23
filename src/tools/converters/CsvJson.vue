@@ -114,12 +114,15 @@ const result = computed<Result>(() => {
     if (!arr.length) return { out: "" };
     try {
         const records = arr.map((r) => {
-            const o = flatten.value ? flattenObj(r) : r;
+            const o = flatten.value && r !== null && typeof r === "object" && !Array.isArray(r) ? flattenObj(r) : r;
             if (o === null || typeof o !== "object") return { value: o };
             if (Array.isArray(o)) return Object.fromEntries(o.map((x, i) => [i, x]));
             return Object.fromEntries(Object.entries(o as object).map(([k, v]) => [k, v !== null && typeof v === "object" ? JSON.stringify(v) : v]));
         });
-        const out = Papa.unparse(records as object[], { delimiter: delimiterValue.value || ",", header: header.value, newline: "\n" });
+        // Papa takes the columns from the first record only; use the union so later keys are not dropped.
+        const columns = [...new Set(records.flatMap((r) => Object.keys(r)))];
+        if (!columns.length) return { out: "" };
+        const out = Papa.unparse(records as object[], { delimiter: delimiterValue.value || ",", header: header.value, newline: "\n", columns });
         return { out };
     } catch (e) {
         return { out: "", error: (e as Error).message };
