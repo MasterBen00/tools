@@ -114,7 +114,9 @@ export default defineConfig({
                     // Must always come from the network so update checks see the latest deploy.
                     "version.json",
                     "**/*web-llm*",
-                    "**/*worker*",
+                    // The WebLLM chat worker (~6 MB, emitted as "worker-[hash].js"). Other workers,
+                    // like the Regex Tester's "regex.worker-[hash].js", stay precached for offline use.
+                    "**/worker-*.js",
                 ],
                 // The GPT tokenizer chunk is ~2 MB.
                 maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,

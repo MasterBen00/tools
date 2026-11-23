@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useHandoff } from "@/composables/handoff";
-import { computed, ref } from "vue";
+import { computed, onBeforeUnmount, ref } from "vue";
+import { watchDebounced } from "@vueuse/core";
+import type { RegexMatch, RegexRequest, RegexResponse } from "./regex.worker";
 import { Eraser, FlaskConical } from "lucide-vue-next";
 import { Btn, CodeArea, CopyButton, Notice, Panel, Tabs, ToolPage } from "@/components/ui";
 
@@ -23,14 +25,7 @@ function toggle(f: string) {
     flags.value = flags.value.includes(f) ? flags.value.filter((x) => x !== f) : [...flags.value, f];
 }
 
-interface M {
-    index: number;
-    text: string;
-    end: number;
-    groups: (string | undefined)[];
-    named: Record<string, string | undefined>;
-}
-
+// Compiling is safe on the main thread (no matching happens), so syntax errors still show instantly.
 const compiled = computed<{ re?: RegExp; error?: string }>(() => {
     if (!pattern.value) return {};
     try {
@@ -40,25 +35,70 @@ const compiled = computed<{ re?: RegExp; error?: string }>(() => {
     }
 });
 
-const matches = computed<M[]>(() => {
-    const re = compiled.value.re;
-    if (!re || !text.value) return [];
-    const out: M[] = [];
-    const g = new RegExp(re.source, re.flags.includes("g") || re.flags.includes("y") ? re.flags : re.flags + "g");
-    let m: RegExpExecArray | null;
-    let guard = 0;
-    while ((m = g.exec(text.value)) && guard++ < 5000) {
-        out.push({
-            index: m.index,
-            text: m[0],
-            end: m.index + m[0].length,
-            groups: m.slice(1),
-            named: { ...(m.groups ?? {}) },
-        });
-        if (!re.flags.includes("g")) break;
-        if (m[0] === "") g.lastIndex++;
+// Matching and replacing run in a worker: a catastrophically backtracking pattern
+// (e.g. ^(a+)+$) would otherwise freeze the tab. Runs past TIMEOUT_MS are killed.
+const TIMEOUT_MS = 1500;
+const matches = ref<RegexMatch[]>([]);
+const matchedText = ref(""); // the text `matches` was computed against
+const replaced = ref("");
+const capped = ref(false);
+const timedOut = ref(false);
+
+let worker: Worker | undefined;
+let timer: ReturnType<typeof setTimeout> | undefined;
+let lastId = 0;
+
+function getWorker() {
+    if (!worker) {
+        worker = new Worker(new URL("./regex.worker.ts", import.meta.url), { type: "module" });
+        worker.onmessage = (e: MessageEvent<RegexResponse>) => {
+            const res = e.data;
+            if (res.id !== lastId) return; // stale reply from an older request
+            clearTimeout(timer);
+            if (!res.ok) return clearResults();
+            matches.value = res.matches;
+            capped.value = res.capped;
+            replaced.value = res.replaced ?? "";
+        };
     }
-    return out;
+    return worker;
+}
+
+function clearResults() {
+    matches.value = [];
+    capped.value = false;
+    replaced.value = "";
+}
+
+function run() {
+    const id = ++lastId;
+    clearTimeout(timer);
+    timedOut.value = false;
+    const re = compiled.value.re;
+    matchedText.value = text.value;
+    if (!re || typeof Worker === "undefined") return clearResults();
+    const req: RegexRequest = {
+        id,
+        pattern: re.source,
+        flags: re.flags,
+        text: text.value,
+        mode: tab.value,
+        replacement: replacement.value,
+    };
+    getWorker().postMessage(req);
+    timer = setTimeout(() => {
+        if (id !== lastId) return;
+        worker?.terminate();
+        worker = undefined; // a fresh one is created on the next run
+        clearResults();
+        timedOut.value = true;
+    }, TIMEOUT_MS);
+}
+
+watchDebounced([pattern, flags, text, replacement, tab], run, { debounce: 150, immediate: true });
+onBeforeUnmount(() => {
+    clearTimeout(timer);
+    worker?.terminate();
 });
 
 function esc(s: string) {
@@ -66,7 +106,8 @@ function esc(s: string) {
 }
 
 const highlighted = computed(() => {
-    const t = text.value;
+    // Use the text the current matches belong to, so indices never point into newer, unmatched text.
+    const t = matchedText.value;
     let html = "";
     let pos = 0;
     for (const m of matches.value) {
@@ -77,16 +118,6 @@ const highlighted = computed(() => {
     }
     html += esc(t.slice(pos));
     return html + "\n";
-});
-
-const replaced = computed(() => {
-    const re = compiled.value.re;
-    if (!re) return "";
-    try {
-        return text.value.replace(re, replacement.value);
-    } catch (e) {
-        return (e as Error).message;
-    }
 });
 
 // Input sent from the chat assistant.
@@ -122,6 +153,10 @@ useHandoff<{ input?: string; pattern?: string }>("regex-tester", (p) => {
                 </button>
             </div>
             <Notice v-if="compiled.error" type="error" class="mt-3">{{ compiled.error }}</Notice>
+            <Notice v-else-if="timedOut" type="error" class="mt-3">
+                Stopped: this pattern took too long (likely catastrophic backtracking). Results cleared.
+            </Notice>
+            <Notice v-else-if="capped" type="warning" class="mt-3">Showing the first 10,000 matches only.</Notice>
         </Panel>
 
         <div class="grid gap-4 lg:grid-cols-2">
