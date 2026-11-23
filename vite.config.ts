@@ -115,7 +115,6 @@ export default defineConfig({
                     "version.json",
                     "**/*web-llm*",
                     "**/*worker*",
-                    "**/lib-*.js",
                 ],
                 // The GPT tokenizer chunk is ~2 MB.
                 maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
@@ -161,7 +160,20 @@ export default defineConfig({
         __BUILD_DATE__: JSON.stringify(BUILD_DATE),
     },
     // Large chunks (tokenizer, prettier parsers) are lazy-loaded per tool.
-    build: { chunkSizeWarningLimit: 2500 },
+    build: {
+        chunkSizeWarningLimit: 2500,
+        rolldownOptions: {
+            output: {
+                // WebLLM's chunk would otherwise be named after its entry file ("lib-…"), a name other
+                // packages share (vue-sonner, imported by the app shell). Name it explicitly so the
+                // "**/*web-llm*" precache ignore above matches only it.
+                chunkFileNames: (chunk) =>
+                    chunk.moduleIds.some((id) => id.includes("@mlc-ai/web-llm"))
+                        ? "assets/web-llm-[hash].js"
+                        : "assets/[name]-[hash].js",
+            },
+        },
+    },
     worker: { format: "es" },
     resolve: {
         alias: {
