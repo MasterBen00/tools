@@ -30,6 +30,13 @@ function parseColor(input: string): RGBA | null {
     c.fillStyle = "#040506";
     c.fillStyle = s;
     if (first === "#010203" && c.fillStyle === "#040506") return null;
+    // sRGB colors serialize as #rrggbb or rgba(r, g, b, a): read those exactly, since the pixel
+    // readback below loses the RGB of fully transparent colors and rounds alpha to 1/255 steps.
+    const norm = String(c.fillStyle);
+    const hx = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(norm);
+    if (hx) return { r: parseInt(hx[1], 16), g: parseInt(hx[2], 16), b: parseInt(hx[3], 16), a: 1 };
+    const rgba = /^rgba\((\d+), (\d+), (\d+), ([\d.]+)\)$/.exec(norm);
+    if (rgba) return { r: +rgba[1], g: +rgba[2], b: +rgba[3], a: Math.round(+rgba[4] * 100) / 100 };
     c.clearRect(0, 0, 1, 1);
     c.fillRect(0, 0, 1, 1);
     const d = c.getImageData(0, 0, 1, 1).data;

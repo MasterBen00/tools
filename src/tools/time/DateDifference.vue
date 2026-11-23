@@ -34,9 +34,16 @@ const diff = computed(() => {
     let months = (b.getFullYear() - a.getFullYear()) * 12 + (b.getMonth() - a.getMonth());
     if (addMonths(a, months) > b) months--;
     const afterMonths = addMonths(a, months);
-    let rest = Math.floor((b.getTime() - afterMonths.getTime()) / 1000);
-    const days = Math.floor(rest / 86400);
-    rest -= days * 86400;
+    // Count whole calendar days in local time, so a span across a DST change is not "6 days, 23 hours".
+    const plusDays = (n: number) => {
+        const r = new Date(afterMonths);
+        r.setDate(r.getDate() + n);
+        return r;
+    };
+    let days = Math.floor((b.getTime() - afterMonths.getTime()) / 864e5);
+    while (days > 0 && plusDays(days) > b) days--;
+    while (plusDays(days + 1) <= b) days++;
+    let rest = Math.floor((b.getTime() - plusDays(days).getTime()) / 1000);
     const hours = Math.floor(rest / 3600);
     rest -= hours * 3600;
     const minutes = Math.floor(rest / 60);

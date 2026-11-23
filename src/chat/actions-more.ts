@@ -607,7 +607,8 @@ export const lateActions: Action[] = [
                     out = ta.value;
                 } else out = input.replace(/[&<>"']/g, (c) => `&${{ "&": "amp", "<": "lt", ">": "gt", '"': "quot", "'": "#39" }[c]};`);
             } else if (kind === "json") out = un ? JSON.parse(`"${input}"`) : JSON.stringify(input).slice(1, -1);
-            else out = un ? input.replace(/\\u\{?([0-9a-f]{4,6})\}?/gi, (_, h) => String.fromCodePoint(parseInt(h, 16))) : [...input].map((c) => (c.codePointAt(0)! > 126 ? `\\u${c.codePointAt(0)!.toString(16).padStart(4, "0")}` : c)).join("");
+            // \uXXXX is exactly 4 hex digits (so a hex letter right after the escape stays text); code points past U+FFFF need \u{…}.
+            else out = un ? input.replace(/\\u\{([0-9a-f]{1,6})\}|\\u([0-9a-f]{4})/gi, (_, b, h) => String.fromCodePoint(parseInt(b ?? h, 16))) : [...input].map((c) => { const cp = c.codePointAt(0)!; return cp > 0xffff ? `\\u{${cp.toString(16)}}` : cp > 126 ? `\\u${cp.toString(16).padStart(4, "0")}` : c; }).join("");
         } catch {
             return r("escape-tools", "Couldn't unescape that.", { error: true, handoff: { kind, dir: "unescape", input } });
         }
